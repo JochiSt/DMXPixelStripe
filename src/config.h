@@ -17,7 +17,7 @@
 
 #ifndef _CONFIG_H_
 	#define _CONFIG_H_
-	#define F_CPU 			16000000
+	#define F_CPU               16000000
 
 	#define DMX_LOST_TIMEOUT 	500
 

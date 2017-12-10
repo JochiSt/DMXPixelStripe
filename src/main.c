@@ -1,22 +1,22 @@
 /*----------------------------------------------------------------------------
- Dieses Programm ist freie Software. Sie können es unter den Bedingungen der 
- GNU General Public License, wie von der Free Software Foundation veröffentlicht, 
- weitergeben und/oder modifizieren, entweder gemäß Version 2 der Lizenz oder 
- (nach Ihrer Option) jeder späteren Version. 
+ Dieses Programm ist freie Software. Sie können es unter den Bedingungen der
+ GNU General Public License, wie von der Free Software Foundation veröffentlicht,
+ weitergeben und/oder modifizieren, entweder gemäß Version 2 der Lizenz oder
+ (nach Ihrer Option) jeder späteren Version.
 
- Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, 
- daß es Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, 
- sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT 
- FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License. 
+ Die Veröffentlichung dieses Programms erfolgt in der Hoffnung,
+ daß es Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE,
+ sogar ohne die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT
+ FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.
 
- Sie sollten eine Kopie der GNU General Public License zusammen mit diesem 
- Programm erhalten haben. 
- Falls nicht, schreiben Sie an die Free Software Foundation, 
- Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.   
+ Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
+ Programm erhalten haben.
+ Falls nicht, schreiben Sie an die Free Software Foundation,
+ Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ------------------------------------------------------------------------------*/
 #define MAX_WS2811_LEDS 	30		// our 1m strip has 30 LEDs
 #define DMX_BAUD 		250000
-#define MAX_DMX_ADDR		512		// maximal dmx address
+#define MAX_DMX_ADDR	   512		// maximal dmx address
 
 #include "global.h"
 #include "config.h"
@@ -42,9 +42,8 @@ volatile uint8_t dmx_buffer_in[512];
 volatile uint8_t dmx_valid = 0;
 volatile uint8_t dmx_change = 0;
 
-struct cRGB led_values[MAX_WS2811_LEDS];	//NOTE: GRB notation 
-						// LED red   = struct green
-						// LED green = struct red
+struct cRGB led_values[MAX_WS2811_LEDS];	//NOTE: GRB notation
+
 uint8_t mode = 1;
 
 void updateAddrMode(void);
@@ -54,14 +53,14 @@ void testSwitchMode(void);
 ISR (USART_RX_vect){
 	static unsigned int dmx_channel_rx_count = 0;
 	unsigned char tmp = 0;
-	
+
 	tmp =  UDR0;
-	
-	if(UCSR0A&(1<<FE0)){	
+
+	if(UCSR0A&(1<<FE0)){
 		dmx_change = 1;
 		dmx_channel_rx_count = 0;
 		dmx_buffer_in[0] = tmp;
-		
+
 		if(dmx_buffer_in[0] == 0){
 			if(dmx_valid < 255){
 				dmx_valid++;
@@ -72,10 +71,10 @@ ISR (USART_RX_vect){
 		}
 		return;
 	}
-	
+
 	if(dmx_valid > 1){
 		dmx_buffer_in[dmx_channel_rx_count] = tmp;
-				
+
 /*
 		if((dmx_channel_rx_count%3) == 0){
 			tmp = dmx_buffer_in[dmx_channel_rx_count-2];
@@ -83,7 +82,7 @@ ISR (USART_RX_vect){
 			dmx_buffer_in[dmx_channel_rx_count-1] = tmp;
 		}
 */
-		
+
 		if(dmx_channel_rx_count < 512){
 			dmx_channel_rx_count++;
 		}
@@ -92,7 +91,7 @@ ISR (USART_RX_vect){
 }
 
 void updateAddrMode(){
-	dmx_adresse  = 0;	
+	dmx_adresse  = 0;
 	dmx_adresse  =  !IS_SET(A0);
 	dmx_adresse |= (!IS_SET(A1))<<1;
 	dmx_adresse |= (!IS_SET(A2))<<2;
@@ -105,7 +104,7 @@ void updateAddrMode(){
 
 	if(dmx_adresse == 0) dmx_adresse = 1;
 
-	mode  = 0;	
+	mode  = 0;
 	mode  =  !IS_SET(M0);
 	mode |= (!IS_SET(M1))<<1;
 	mode |= (!IS_SET(M2))<<2;
@@ -116,7 +115,8 @@ void updateAddrMode(){
 void testSwitchMode(){
 	updateAddrMode();
 	uint8_t local_cnt = 0;
-	for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+	uint8_t i;
+	for(i=0; i<MAX_WS2811_LEDS; i++){
 		// 1st encode mode into color
 		if(mode == 0){
 			led_values[i].g = 255;	// red
@@ -176,8 +176,10 @@ int main(void){
 	SET_INPUT(M2); SET(M2);
 
 //#############################################################################
+    uint8_t i;
+
 #ifdef DO_STARTUP
-	for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+	for(i=0; i<MAX_WS2811_LEDS; i++){
 		led_values[i].g = 255;	// red
 		led_values[i].r = 0;	// green
 		led_values[i].b = 0;	// blue
@@ -185,7 +187,7 @@ int main(void){
 		_delay_ms(50);
 	}
 	_delay_ms(250);
-	for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+	for(i=0; i<MAX_WS2811_LEDS; i++){
 		led_values[i].g = 0;	// red
 		led_values[i].r = 255;	// green
 		led_values[i].b = 0;	// blue
@@ -193,7 +195,7 @@ int main(void){
 		_delay_ms(50);
 	}
 	_delay_ms(250);
-	for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+	for(i=0; i<MAX_WS2811_LEDS; i++){
 		led_values[i].g = 0;	// red
 		led_values[i].r = 0;	// green
 		led_values[i].b = 255;	// blue
@@ -201,7 +203,7 @@ int main(void){
 		_delay_ms(50);
 	}
 	_delay_ms(250);
-	for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+	for(i=0; i<MAX_WS2811_LEDS; i++){
 		led_values[i].g = 0;	// red
 		led_values[i].r = 0;	// green
 		led_values[i].b = 0;	// blue
@@ -226,28 +228,30 @@ int main(void){
 	testSwitchMode();
 	_delay_ms(1000);
 //#############################################################################
-	
+
 	timer_init();
 
-	sei();//Globale Interrupts Enable	
-			
+	sei();//Globale Interrupts Enable
+
 //#############################################################################
 //#############################################################################
 
-	while(1){		
+	while(1){
 		if (dmx_change && (dmx_valid>2)){
 			dmx_valid = 0;
 			uint16_t local_dmx_addr = dmx_adresse;
 
 			// generate LED colors from DMX values
+			/** MODE 1 -> all pixel the same color */
 			if(mode & 1){
-				for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+				for(i=0; i<MAX_WS2811_LEDS; i++){
 					led_values[i].g = dmx_buffer_in[dmx_adresse];
 					led_values[i].r = dmx_buffer_in[dmx_adresse+1];
 					led_values[i].b = dmx_buffer_in[dmx_adresse+2];
 				}
+            /** MODE 2 -> each pixel individual color */
 			}else if(mode & 2){
-				for(uint8_t i=0; i<MAX_WS2811_LEDS; i++){
+				for(i=0; i<MAX_WS2811_LEDS; i++){
 					// introduce correct pixel to address mapping
 					led_values[i].g = dmx_buffer_in[local_dmx_addr++];
 					led_values[i].r = dmx_buffer_in[local_dmx_addr++];
@@ -267,6 +271,6 @@ int main(void){
 				testSwitchMode();
 			}
 		}
-	}		
+	}
 }
 

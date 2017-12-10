@@ -1,0 +1,37 @@
+# depslib dependency file v1.0
+1512922997 source:c:\users\steinmann\documents\github\dmxpixelstripe\src\main.c
+	"global.h"
+	"config.h"
+	<util/delay.h>
+	<avr/io.h>
+	<math.h>
+	<avr/interrupt.h>
+	<avr/pgmspace.h>
+	"light_ws2812.h"
+	"timer.h"
+
+1459322736 c:\users\steinmann\documents\github\dmxpixelstripe\src\global.h
+
+1512923029 c:\users\steinmann\documents\github\dmxpixelstripe\src\config.h
+
+1459322736 c:\users\steinmann\documents\github\dmxpixelstripe\src\light_ws2812.h
+	<avr/io.h>
+	<avr/interrupt.h>
+	"ws2812_config.h"
+
+1459322736 c:\users\steinmann\documents\github\dmxpixelstripe\src\ws2812_config.h
+
+1459322736 c:\users\steinmann\documents\github\dmxpixelstripe\src\timer.h
+
+1459322736 source:c:\users\steinmann\documents\github\dmxpixelstripe\src\timer.c
+	"config.h"
+	<avr/io.h>
+	<avr/interrupt.h>
+	"timer.h"
+
+1459322736 source:c:\users\steinmann\documents\github\dmxpixelstripe\src\light_ws2812.c
+	"light_ws2812.h"
+	<avr/interrupt.h>
+	<avr/io.h>
+	<util/delay.h>
+

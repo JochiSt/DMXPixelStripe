@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<EmBitz_project_file>
+	<EmBitzVersion release="1.11" revision="0" />
+	<FileVersion major="1" minor="0" />
+	<Project>
+		<Option title="DMX Pixel Stripe" />
+		<Option pch_mode="2" />
+		<Option compiler="avrgcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\DMX Pixel Stripe.elf" />
+				<Option object_output="obj\Debug\" />
+				<Option type="0" />
+				<Option compiler="avrgcc" />
+				<Option projectDeviceOptionsRelation="0" />
+				<Compiler>
+					<Add option="-Os" />
+					<Add option="-g2" />
+				</Compiler>
+				<Assembler>
+					<Add option="--gdwarf-2" />
+				</Assembler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\DMX Pixel Stripe.elf" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option compiler="avrgcc" />
+				<Option projectDeviceOptionsRelation="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-g2" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+				</Compiler>
+				<Linker>
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+		</Build>
+		<Device>
+			<Add option="$device=atmega168p" />
+		</Device>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="src\config.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\global.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\light_ws2812.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\light_ws2812.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\main.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\timer.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\timer.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="src\ws2812_config.h">
+			<Option target="Debug" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</EmBitz_project_file>
