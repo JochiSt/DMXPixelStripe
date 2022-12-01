@@ -178,6 +178,8 @@ int main(void){
 //#############################################################################
     uint8_t i;
 
+    updateAddrMode();
+
 #ifdef DO_STARTUP
 	for(i=0; i<MAX_WS2811_LEDS; i++){
 		led_values[i].g = 255;	// red
@@ -236,41 +238,68 @@ int main(void){
 //#############################################################################
 //#############################################################################
 
+/**
+ * Mode 0 each pixel own DMX channel
+ * Mode 1 all pixel same color
+ * Mode 2 set all pixel color via DMX address
+ *  A0 - A2 3 R
+ *  A3 - A5 3 G
+ *  A6 - A8 3 B
+ * Mode 3 self running fade
+    -> time via DMX dip switches
+ */
+
 	while(1){
-		if (dmx_change && (dmx_valid>2)){
-			dmx_valid = 0;
-			uint16_t local_dmx_addr = dmx_adresse;
+	    //FIXME use timer for updating the address and mode
+        updateAddrMode();
+        if(mode == 0 || mode == 1){
+            if (dmx_change && (dmx_valid>2)){
+                dmx_valid = 0;
+                uint16_t local_dmx_addr = dmx_adresse;
 
-			// generate LED colors from DMX values
-			/** MODE 1 -> all pixel the same color */
-			if(mode & 1){
-				for(i=0; i<MAX_WS2811_LEDS; i++){
-					led_values[i].g = dmx_buffer_in[dmx_adresse];
-					led_values[i].r = dmx_buffer_in[dmx_adresse+1];
-					led_values[i].b = dmx_buffer_in[dmx_adresse+2];
-				}
-            /** MODE 2 -> each pixel individual color */
-			}else if(mode & 2){
-				for(i=0; i<MAX_WS2811_LEDS; i++){
-					// introduce correct pixel to address mapping
-					led_values[i].g = dmx_buffer_in[local_dmx_addr++];
-					led_values[i].r = dmx_buffer_in[local_dmx_addr++];
-					led_values[i].b = dmx_buffer_in[local_dmx_addr++];
-				}
-			}
-			// timing critical so disable interupts
-			cli();
-			ws2812_setleds(led_values,MAX_WS2811_LEDS);
-			sei();
+                // generate LED colors from DMX values
+                /** MODE 0 -> each pixel individual color */
+                if(mode == 0){
+                    for(i=0; i<MAX_WS2811_LEDS; i++){
+                        // introduce correct pixel to address mapping
+                        led_values[i].g = dmx_buffer_in[local_dmx_addr++];
+                        led_values[i].r = dmx_buffer_in[local_dmx_addr++];
+                        led_values[i].b = dmx_buffer_in[local_dmx_addr++];
+                    }
+                /** MODE 1 -> all pixel the same color */
+                }else if(mode == 1){
+                    for(i=0; i<MAX_WS2811_LEDS; i++){
+                        led_values[i].g = dmx_buffer_in[dmx_adresse];
+                        led_values[i].r = dmx_buffer_in[dmx_adresse+1];
+                        led_values[i].b = dmx_buffer_in[dmx_adresse+2];
+                    }
+                }
+                // timing critical so disable interupts
+                cli();
+                ws2812_setleds(led_values,MAX_WS2811_LEDS);
+                sei();
 
-			dmx_change = 0;
-			noDMX_timer = DMX_LOST_TIMEOUT;
-		}else{
-			if(!noDMX_timer){
-				noDMX_timer = DMX_LOST_TIMEOUT;
-				testSwitchMode();
-			}
-		}
+                dmx_change = 0;
+                noDMX_timer = DMX_LOST_TIMEOUT;
+            }else{
+                if(!noDMX_timer){
+                    noDMX_timer = DMX_LOST_TIMEOUT;
+                    testSwitchMode();
+                }
+            }
+            /** MODE 2 -> set color via dip switch for address*/
+        }else if(mode == 2){
+            uint8_t red     = ((dmx_adresse   & 0b000000111) >> 0) << 5;
+            uint8_t green   = ((dmx_adresse   & 0b000111000) >> 3) << 5;
+            uint8_t blue    = ((dmx_adresse   & 0b111000000) >> 6) << 5;
+            for(i=0; i<MAX_WS2811_LEDS; i++){
+                led_values[i].g = red;
+                led_values[i].r = green;
+                led_values[i].b = blue;
+            }
+        }else if(mode == 3){
+            // self running light effect
+        }
 	}
 }
 
